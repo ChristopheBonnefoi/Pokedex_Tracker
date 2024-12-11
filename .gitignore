@@ -1,0 +1,10 @@
+# Exclure la base de données locale
+db.sqlite3
+
+# Exclure les fichiers générés par Python
+*.pyc
+__pycache__/
+
+# Exclure les fichiers générés par des outils
+dist/
+build/
