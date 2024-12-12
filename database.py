@@ -14,34 +14,29 @@ def init_db():
             nom_fr TEXT NOT NULL,
             nom_eng TEXT NOT NULL,
             forme TEXT DEFAULT 'Default',  -- Colonne pour gérer les formes
+            evolutions TEXT,  -- Champs JSON pour les évolutions
             type1 TEXT NOT NULL,
             type2 TEXT,
             hp INTEGER,
             attaque INTEGER,
             defense INTEGER,
-            evolutions TEXT,  -- Champs JSON pour les évolutions
             jeux_disponibles TEXT,
             shiny INTEGER DEFAULT 0,
             capture INTEGER DEFAULT 0
         )
     ''')
 
-    # Supprimer la colonne `formes` si elle existe
-    cursor.execute("PRAGMA table_info(pokemon)")
-    columns = [col[1] for col in cursor.fetchall()]
-    if "formes" in columns:
-        print("Suppression de la colonne `formes`.")        
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS pokemon_new AS
-            SELECT id, numero, image_url, nom_fr, nom_eng, forme, type1, type2, hp, attaque, defense, evolutions, jeux_disponibles, shiny, capture
-            FROM pokemon
-        ''')
-        cursor.execute("DROP TABLE pokemon")
-        cursor.execute("ALTER TABLE pokemon_new RENAME TO pokemon")
-        print("Colonne `formes` supprimée avec succès.")
-
-    conn.commit()
+def load_pokedex():
+    """Charge les Pokémon depuis la base de données."""
+    conn = sqlite3.connect('db.sqlite3')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT numero, forme, image_url, nom_eng, shiny, capture
+        FROM pokemon
+    ''')
+    pokemons = cursor.fetchall()
     conn.close()
+    return pokemons
 
 
 

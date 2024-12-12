@@ -8,3 +8,6 @@ __pycache__/
 # Exclure les fichiers générés par des outils
 dist/
 build/
+
+# Exclure les dossiers d'images
+assets/pokemon_images/
