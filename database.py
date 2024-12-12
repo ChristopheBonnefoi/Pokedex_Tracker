@@ -31,12 +31,13 @@ def load_pokedex():
     conn = sqlite3.connect('db.sqlite3')
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT numero, forme, image_url, nom_eng, shiny, capture
+        SELECT numero, nom_fr, nom_eng, forme, evolutions, jeux_disponibles, shiny, capture, image_url
         FROM pokemon
     ''')
     pokemons = cursor.fetchall()
     conn.close()
     return pokemons
+
 
 
 

@@ -1,102 +1,121 @@
+from PyQt5.QtWidgets import QApplication, QTableWidget, QTableWidgetItem, QCheckBox, QVBoxLayout, QWidget, QLabel, QHBoxLayout
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 import os
-from tkinter import ttk, Label, Toplevel
-from PIL import Image, ImageTk
 from database import load_pokedex  # Charger les Pokémon depuis la base de données
 
 DEFAULT_IMAGE_PATH = os.path.join("assets", "default_image.png")
 
 
-class NationalTab:
-    def __init__(self, notebook):
-        # Créer le cadre pour cet onglet
-        self.frame = ttk.Frame(notebook)
+class NationalTab(QWidget):  # Garder le nom original
+    def __init__(self):
+        super().__init__()
 
-        # Créer une table pour afficher les Pokémon
-        self.tree = ttk.Treeview(
-            self.frame,
-            columns=("Numéro", "Nom", "Forme", "Shiny", "Capturé", "Image"),
-            show="headings"
+        # Configuration de la fenêtre
+        self.setWindowTitle("Pokedex Tracker")
+        self.setGeometry(100, 100, 1200, 600)
+
+        # Configuration du tableau
+        self.table = QTableWidget()
+        self.table.setColumnCount(9)
+        self.table.setHorizontalHeaderLabels(
+            ["#", "Image", "Nom_FR", "Nom_ENG", "Forme", "Évolution", "Jeux", "Shiny", "Capturé"]
         )
+        self.table.horizontalHeader().setStretchLastSection(True)
 
-        # Configuration des colonnes
-        self.tree.heading("Numéro", text="Numéro")
-        self.tree.heading("Nom", text="Nom")
-        self.tree.heading("Forme", text="Forme")
-        self.tree.heading("Shiny", text="Shiny")
-        self.tree.heading("Capturé", text="Capturé")
-        self.tree.heading("Image", text="Image")
+        # Cacher les numéros à gauche de la colonne `#`
+        self.table.verticalHeader().setVisible(False)
 
-        self.tree.column("Numéro", width=50, anchor="center")
-        self.tree.column("Nom", width=150, anchor="center")
-        self.tree.column("Forme", width=150, anchor="center")
-        self.tree.column("Shiny", width=100, anchor="center")
-        self.tree.column("Capturé", width=100, anchor="center")
-        self.tree.column("Image", width=150, anchor="center")
+        # Charger les données depuis la base de données
+        self.load_data()
 
-        # Ajouter la table à l'onglet
-        self.tree.pack(fill="both", expand=True)
+        # Ajouter le tableau à la disposition principale
+        layout = QVBoxLayout()
+        layout.addWidget(self.table)
+        self.setLayout(layout)
 
-        # Dictionnaire pour stocker les images et éviter qu'elles ne soient supprimées
-        self.images = {}
-
-        # Charger les données initiales
-        self.refresh_table()
-
-    def refresh_table(self):
-        """Recharge les données depuis la base de données et met à jour la table."""
-        # Vider les anciennes données
-        for row in self.tree.get_children():
-            self.tree.delete(row)
-
-        # Charger les Pokémon depuis la base de données
+    def load_data(self):
+        """Charge les données depuis la base de données et les ajoute au tableau."""
         pokemons = load_pokedex()
-        for pokemon in pokemons:
-            numero, forme, image_path, nom_eng, shiny_flag, capture_flag = pokemon
+        self.table.setRowCount(len(pokemons))
 
-            # Charger l'image depuis le chemin local
-            image = self.fetch_image(image_path)
-            if image:
-                self.images[numero] = image  # Préserver l'image
+        for row, pokemon in enumerate(pokemons):
+            numero, nom_fr, nom_eng, forme, evolution, jeux, shiny_flag, capture_flag, image_path = pokemon
 
-            # Convertir les booléens shiny et capture en symboles ✔️ ou ❌
-            shiny = "✔️" if shiny_flag else "❌"
-            capture = "✔️" if capture_flag else "❌"
+            # Fixer la hauteur de la ligne
+            self.table.setRowHeight(row, 96)
 
-            # Ajouter la ligne dans le tableau
-            self.tree.insert("", "end", values=(numero, nom_eng, forme, shiny, capture, f"Voir Image {numero}"))
+            # Colonne numéro (affichage centré)
+            item = QTableWidgetItem(str(numero))
+            item.setTextAlignment(Qt.AlignCenter)
+            self.table.setItem(row, 0, item)
 
-        # Ajouter un événement pour afficher l'image en popup
-        self.tree.bind("<ButtonRelease-1>", self.show_image_popup)
+            # Colonne image
+            if not os.path.exists(image_path):
+                image_path = DEFAULT_IMAGE_PATH
+            pixmap = QPixmap(image_path).scaled(96, 96, Qt.KeepAspectRatio)
 
-    def fetch_image(self, image_path):
-        """Charge une image depuis un chemin local ou utilise une image par défaut."""
-        try:
-            pil_image = Image.open(image_path).resize((96, 96))
-            return ImageTk.PhotoImage(pil_image)
-        except Exception as e:
-            print(f"Erreur lors du chargement de l'image {image_path} : {e}. Utilisation de l'image par défaut.")
-            return self.load_default_image()
+            label = QLabel()
+            label.setPixmap(pixmap)
 
-    def load_default_image(self):
-        """Charge une image par défaut locale."""
-        try:
-            pil_image = Image.open(DEFAULT_IMAGE_PATH).resize((96, 96))
-            return ImageTk.PhotoImage(pil_image)
-        except Exception as e:
-            print(f"Erreur lors du chargement de l'image par défaut : {e}")
-            return None
+            # Centrer l'image avec un layout
+            layout = QHBoxLayout()
+            layout.addWidget(label)
+            layout.setAlignment(Qt.AlignCenter)
+            container = QWidget()
+            container.setLayout(layout)
 
-    def show_image_popup(self, event):
-        """Affiche une image en popup lorsqu'une ligne est cliquée."""
-        selected_item = self.tree.selection()
-        if selected_item:
-            values = self.tree.item(selected_item, "values")
-            numero = int(values[0])  # Récupérer le numéro du Pokémon
-            image = self.images.get(numero)
+            self.table.setCellWidget(row, 1, container)
 
-            if image:
-                popup = Toplevel(self.frame)
-                popup.title(f"Image de Pokémon #{numero}")
-                label = Label(popup, image=image)
-                label.image = image  # Préserver l'image
-                label.pack()
+            # Colonne noms
+            item = QTableWidgetItem(nom_fr)
+            item.setTextAlignment(Qt.AlignCenter)
+            self.table.setItem(row, 2, item)
+
+            item = QTableWidgetItem(nom_eng)
+            item.setTextAlignment(Qt.AlignCenter)
+            self.table.setItem(row, 3, item)
+
+            # Colonne forme
+            item = QTableWidgetItem(forme)
+            item.setTextAlignment(Qt.AlignCenter)
+            self.table.setItem(row, 4, item)
+
+            # Colonne évolution
+            item = QTableWidgetItem(evolution)
+            item.setTextAlignment(Qt.AlignCenter)
+            self.table.setItem(row, 5, item)
+
+            # Colonne jeux disponibles
+            item = QTableWidgetItem(jeux)
+            item.setTextAlignment(Qt.AlignCenter)
+            self.table.setItem(row, 6, item)
+
+            # Colonne shiny (case à cocher centrée)
+            checkbox_shiny = QCheckBox()
+            checkbox_shiny.setChecked(bool(shiny_flag))
+
+            layout = QHBoxLayout()
+            layout.addWidget(checkbox_shiny)
+            layout.setAlignment(Qt.AlignCenter)
+            container = QWidget()
+            container.setLayout(layout)
+            self.table.setCellWidget(row, 7, container)
+
+            # Colonne capturé (case à cocher centrée)
+            checkbox_captured = QCheckBox()
+            checkbox_captured.setChecked(bool(capture_flag))
+
+            layout = QHBoxLayout()
+            layout.addWidget(checkbox_captured)
+            layout.setAlignment(Qt.AlignCenter)
+            container = QWidget()
+            container.setLayout(layout)
+            self.table.setCellWidget(row, 8, container)
+
+
+if __name__ == "__main__":
+    app = QApplication([])
+    window = NationalTab()
+    window.show()
+    app.exec_()

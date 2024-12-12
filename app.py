@@ -1,19 +1,11 @@
-import tkinter as tk
-from tkinter import ttk
+from PyQt5.QtWidgets import QApplication
 from tabs.national import NationalTab
 
 def create_app():
-    root = tk.Tk()
-    root.title("Pokédex Tracker")
-
-    notebook = ttk.Notebook(root)
-    notebook.pack(fill=tk.BOTH, expand=True)
-
-    # Ajouter l'onglet Pokédex National
-    national_tab = NationalTab(notebook)
-    notebook.add(national_tab.frame, text="Pokédex National")
-
-    root.mainloop()
+    app = QApplication([])  # Crée une instance d'application PyQt
+    window = NationalTab()  # Utilise la classe NationalTab
+    window.show()           # Affiche la fenêtre principale
+    app.exec_()             # Lance la boucle principale de l'application
 
 if __name__ == "__main__":
     create_app()
