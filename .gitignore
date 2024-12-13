@@ -9,5 +9,10 @@ __pycache__/
 dist/
 build/
 
-# Exclure les dossiers d'images
-assets/pokemon_images/
+# Exclure le contenu du dossier pokemon_images, mais garder le dossier
+pokemon_images/*
+!pokemon_images/.gitkeep
+
+# Exclure le contenu du dossier logs, mais garder le dossier
+logs/*
+!logs/.gitkeep
