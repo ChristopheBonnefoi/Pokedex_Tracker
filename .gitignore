@@ -16,3 +16,6 @@ pokemon_images/*
 # Exclure le contenu du dossier logs, mais garder le dossier
 logs/*
 !logs/.gitkeep
+
+.vscode/
+.venv/
