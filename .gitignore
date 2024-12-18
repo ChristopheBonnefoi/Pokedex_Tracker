@@ -1,5 +1,5 @@
 # Exclure la base de données locale
-db.sqlite3
+pokedex.sqlite3
 
 # Exclure les fichiers générés par Python
 *.pyc

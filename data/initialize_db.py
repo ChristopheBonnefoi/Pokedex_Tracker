@@ -2,7 +2,12 @@ import sys
 import os
 import sqlite3  # Import sqlite3
 
-from fuctions.log_error import log_error
+# Ajouter le chemin racine au PYTHONPATH
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if project_root not in sys.path:
+    sys.path.append(project_root)
+
+from functions.log_error import log_error
 
 def init_national_dex():
     """Initializes the database and creates the table `national_dex` if it does not exist."""
@@ -14,7 +19,7 @@ def init_national_dex():
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS national_dex (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                number INTEGER NOT NULL,
+                number INTEGER NOT NULL UNIQUE,
                 image_url TEXT DEFAULT 'https://via.placeholder.com/96?text=No+Image',
                 shiny_image_url TEXT,
                 name_fr TEXT NOT NULL,

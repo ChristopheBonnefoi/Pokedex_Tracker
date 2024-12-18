@@ -2,33 +2,42 @@
 
 ## Changelog
 
-### V0.1.9
+### V0.1.10
 #### Résumé des changements
 
-**Refactorisation et Réorganisation**
-- Déplacement de `log_error.py` dans le dossier `functions` pour centraliser les outils communs.
-- Correction des imports et des chemins pour garantir la stabilité et la compatibilité avec la structure du projet.
-- Suppression et réinitialisation des caches liés aux imports pour résoudre des erreurs de reconnaissance de module.  
-- Mise en place de fichiers `__init__.py` dans les dossiers pour officialiser les packages.  
+**Refactorisation et Modularisation**
+- Création du module `fetch_types.py` pour isoler la gestion des types des Pokémon (anglais → français).
+- Externalisation des traductions des types dans un fichier **JSON** pour une meilleure lisibilité et flexibilité.
+- Modularisation progressive des fonctions de récupération des données (ex. `fetch_names`, `fetch_types`).
 
-**Base de Données**
-- Refonte du script `initialize_db.py` pour gérer la création de la table `national_dex`.  
-- Ajout d'une gestion des erreurs SQLite et générales avec un système de logs détaillés dans le dossier `logs`.
-- Amélioration du fichier `log_error.py` pour enregistrer les erreurs avec des noms de fichiers spécifiques et horodatés.
+**Gestion des Logs**
+- Amélioration du système de **logs** pour centraliser toutes les erreurs dans un seul fichier horodaté.
+- Implémentation d'une logique pour éviter la multiplication des fichiers logs.
 
-**Réorganisation de l'Environnement**
-- Nettoyage des erreurs liées aux environnements virtuels (`.venv`).
-- Ajout des configurations VSCode dans `.vscode/settings.json` pour faciliter le développement et stabiliser les imports :
-  - Mise en place de `python.analysis.extraPaths`.
-- Exclusion des fichiers inutiles (`__pycache__`, `.vscode`, etc.) via `.gitignore`.
+**Tests Unitaires**
+- Mise en place de tests unitaires pour les nouvelles fonctionnalités :
+  - Tests de récupération des types et traduction via `test_fetch_types.py`.
+  - Tests pour la récupération des noms anglais et français avec `test_fetch_names.py`.
+- Centralisation des tests dans `debug_tools/tests/`.
 
 **Corrections de Bugs**
-- Résolution des problèmes de non-détection des modules après déplacement ou renommage.
-- Ajustements mineurs dans les fichiers de configuration et l'arborescence du projet.
+- Résolution du problème `NOT NULL constraint failed` pour la colonne `type1_fr`.
+- Ajustement des imports pour assurer la compatibilité avec la nouvelle structure des modules.
+- Correction des erreurs liées à `ModuleNotFoundError` en ajustant les chemins dynamiques dans `sys.path`.
+
+**Divers**
+- Mise à jour des instructions pour exécuter les tests dans un fichier dédié : **README_TESTS.md**.
+- Nettoyage et stabilisation des scripts existants.
 
 ---
 
 ### Versions précédentes
+
+#### V0.1.9
+- Refactorisation et réorganisation des fichiers pour une structure modulaire.
+- Amélioration de la gestion des erreurs avec centralisation des logs.
+- Mise à jour de la configuration VSCode et exclusion des fichiers inutiles dans `.gitignore`.
+- Corrections des bugs liés aux imports et amélioration de la stabilité.
 
 #### V0.1.8
 - Refactorisation des noms en anglais pour la BDD et le code associé (colonnes, variables, commentaires).
