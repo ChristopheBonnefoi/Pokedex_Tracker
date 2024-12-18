@@ -9,15 +9,16 @@ def init_db():
         CREATE TABLE IF NOT EXISTS pokemon (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             number INTEGER NOT NULL, -- National number
-            image_url TEXT DEFAULT 'https://via.placeholder.com/96?text=No+Image', -- Default image
-            shiny_image_url TEXT, -- Shiny image
             name_fr TEXT NOT NULL, -- French name
             name_eng TEXT NOT NULL, -- English name
+            image_url TEXT DEFAULT 'https://via.placeholder.com/96?text=No+Image', -- Default image
+            shiny_image_url TEXT, -- Shiny image
             form TEXT DEFAULT 'Default', -- Specific form of the Pokémon
+            gender TEXT DEFAULT 'Neutral',             -- Sexe ('Male', 'Female', 'Neutral')
             evolutions TEXT, -- JSON containing evolutions
             type1_fr TEXT NOT NULL, -- Primary type in French
-            type1_eng TEXT NOT NULL, -- Primary type in English
             type2_fr TEXT, -- Secondary type in French (nullable)
+            type1_eng TEXT NOT NULL, -- Primary type in English
             type2_eng TEXT, -- Secondary type in English (nullable)
             games_available TEXT, -- Games where the Pokémon is available (JSON or list)
             locations_per_game TEXT, -- Specific locations per game (JSON or list)

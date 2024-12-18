@@ -2,26 +2,36 @@
 
 ## Changelog
 
-### V0.1.11
+### V0.1.12
 #### Résumé des changements
 
-**Gestion des doublons dans la BDD**
-- Ajout d'une vérification pour éviter l'insertion en double des Pokémon dans la base de données.
-- Si un Pokémon avec le même ID existe déjà, il est ignoré afin de prévenir les doublons.
+**Gestion des genres des Pokémon**
+- Ajout de la gestion des genres (`Male`, `Female`, `Neutral`) dans la base de données.
+- Inclusion des informations sur les sprites spécifiques aux genres via l'API.
+- Les Pokémon ayant des sprites masculins et féminins distincts sont ajoutés avec une colonne `gender`.
+- Pokémon sans distinction de genre sont marqués comme `Neutral`.
 
-**Prise en charge des formes alternatives des Pokémon**
-- Intégration des formes spécifiques des Pokémon (Alola, Galar, Hisui, etc.) via l'API.
-- Chaque forme est insérée avec un nom, un ID unique, et une mention de la forme dans la colonne `form`.
-- Exemple de gestion pour **Mewtwo** avec ses formes normales et **Gigantamax**.
-- Support similaire pour **Meowth** (formes Alola et Galar).
+**Améliorations des formes**
+- Support renforcé pour les formes spécifiques des Pokémon (Alola, Galar, etc.).
+- Les formes alternatives sont identifiées et insérées avec des distinctions claires dans la colonne `form`.
+- Exemple : gestion des sprites masculins et féminins de Pikachu ainsi que des formes Alola et Galar de Meowth.
 
-**Améliorations des scripts**
-- Refactorisation des fonctions dans `fetch_forms.py` pour récupérer et traiter les formes alternatives.
-- Mise à jour du script `data_manager.py` pour intégrer la gestion des formes et éviter les conflits d'insertion.
+**Mise à jour de la structure de la base de données**
+- Modification de la structure de la BDD pour inclure la colonne `gender`.
+- Ajustement des scripts existants pour intégrer ces nouveaux champs.
+
+**Refactorisation**
+- Création de `fetch_gender.py` pour centraliser la gestion des genres et éviter les répétitions dans le code.
+- Amélioration de la robustesse des scripts pour éviter les doublons.
 
 ---
 
 ### Versions précédentes
+
+#### V0.1.11
+- Gestion des doublons dans la BDD pour éviter les conflits d'insertion.
+- Intégration des formes alternatives des Pokémon (Alola, Galar, Hisui, etc.).
+- Refactorisation des scripts pour gérer les formes spécifiques et améliorer la maintenance.
 
 #### V0.1.10
 - Ajout de la gestion des types de Pokémon avec traduction en français.

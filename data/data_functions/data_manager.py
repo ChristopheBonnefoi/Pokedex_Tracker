@@ -10,6 +10,7 @@ if project_root not in sys.path:
 from data.data_functions.fetch_names import fetch_names_from_pokeapi
 from data.data_functions.fetch_types import fetch_types_from_pokeapi, translate_type_to_french
 from data.data_functions.fetch_forms import fetch_pokemon_forms
+from data.data_functions.fetch_gender import fetch_gender_from_pokeapi
 from functions.log_error import log_error
 
 
@@ -32,7 +33,7 @@ def pokemon_exists(cursor, pokemon_id, form="Default"):
 
 def update_pokemon_data(max_attempts=3000):
     """
-    Met à jour les noms, types et formes des Pokémon dans la base de données.
+    Met à jour les noms, types, genres et formes des Pokémon dans la base de données.
     - Arrête le script si un ID dépasse les données disponibles.
     """
     try:
@@ -56,6 +57,9 @@ def update_pokemon_data(max_attempts=3000):
                 type1_fr = translate_type_to_french(type1_eng)
                 type2_fr = translate_type_to_french(type2_eng)
 
+                # Récupération du genre
+                gender = fetch_gender_from_pokeapi(pokemon_id)
+
                 # Récupération des formes
                 forms = fetch_pokemon_forms(pokemon_id)
 
@@ -69,13 +73,13 @@ def update_pokemon_data(max_attempts=3000):
                     # Insertion dans la base de données
                     cursor.execute('''
                         INSERT INTO national_dex (
-                            number, name_eng, name_fr, type1_eng, type1_fr, type2_eng, type2_fr, form
+                            number, name_eng, name_fr, type1_eng, type1_fr, type2_eng, type2_fr, form, gender
                         )
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                    ''', (pokemon_id, name_eng, name_fr, type1_eng, type1_fr, type2_eng, type2_fr, form))
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ''', (pokemon_id, name_eng, name_fr, type1_eng, type1_fr, type2_eng, type2_fr, form, gender))
                     conn.commit()
 
-                    print(f"ID {pokemon_id} - Forme ajoutée : {form}, Types : {type1_fr}, {type2_fr}")
+                    print(f"ID {pokemon_id} - Forme ajoutée : {form}, Types : {type1_fr}, {type2_fr}, Genre : {gender}")
 
             except Exception as e:
                 log_error("update_pokemon_data_error", f"Erreur pour ID {pokemon_id} : {e}")
