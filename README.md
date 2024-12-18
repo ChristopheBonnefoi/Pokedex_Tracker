@@ -2,36 +2,32 @@
 
 ## Changelog
 
-### V0.1.10
+### V0.1.11
 #### Résumé des changements
 
-**Refactorisation et Modularisation**
-- Création du module `fetch_types.py` pour isoler la gestion des types des Pokémon (anglais → français).
-- Externalisation des traductions des types dans un fichier **JSON** pour une meilleure lisibilité et flexibilité.
-- Modularisation progressive des fonctions de récupération des données (ex. `fetch_names`, `fetch_types`).
+**Gestion des doublons dans la BDD**
+- Ajout d'une vérification pour éviter l'insertion en double des Pokémon dans la base de données.
+- Si un Pokémon avec le même ID existe déjà, il est ignoré afin de prévenir les doublons.
 
-**Gestion des Logs**
-- Amélioration du système de **logs** pour centraliser toutes les erreurs dans un seul fichier horodaté.
-- Implémentation d'une logique pour éviter la multiplication des fichiers logs.
+**Prise en charge des formes alternatives des Pokémon**
+- Intégration des formes spécifiques des Pokémon (Alola, Galar, Hisui, etc.) via l'API.
+- Chaque forme est insérée avec un nom, un ID unique, et une mention de la forme dans la colonne `form`.
+- Exemple de gestion pour **Mewtwo** avec ses formes normales et **Gigantamax**.
+- Support similaire pour **Meowth** (formes Alola et Galar).
 
-**Tests Unitaires**
-- Mise en place de tests unitaires pour les nouvelles fonctionnalités :
-  - Tests de récupération des types et traduction via `test_fetch_types.py`.
-  - Tests pour la récupération des noms anglais et français avec `test_fetch_names.py`.
-- Centralisation des tests dans `debug_tools/tests/`.
-
-**Corrections de Bugs**
-- Résolution du problème `NOT NULL constraint failed` pour la colonne `type1_fr`.
-- Ajustement des imports pour assurer la compatibilité avec la nouvelle structure des modules.
-- Correction des erreurs liées à `ModuleNotFoundError` en ajustant les chemins dynamiques dans `sys.path`.
-
-**Divers**
-- Mise à jour des instructions pour exécuter les tests dans un fichier dédié : **README_TESTS.md**.
-- Nettoyage et stabilisation des scripts existants.
+**Améliorations des scripts**
+- Refactorisation des fonctions dans `fetch_forms.py` pour récupérer et traiter les formes alternatives.
+- Mise à jour du script `data_manager.py` pour intégrer la gestion des formes et éviter les conflits d'insertion.
 
 ---
 
 ### Versions précédentes
+
+#### V0.1.10
+- Ajout de la gestion des types de Pokémon avec traduction en français.
+- Mise en place d'un système modulaire pour les traductions via un fichier JSON.
+- Création des tests unitaires pour valider les traductions des types.
+- Réorganisation des fonctions dans des fichiers dédiés pour faciliter la maintenance.
 
 #### V0.1.9
 - Refactorisation et réorganisation des fichiers pour une structure modulaire.
